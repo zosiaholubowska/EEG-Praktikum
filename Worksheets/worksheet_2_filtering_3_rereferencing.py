@@ -3,7 +3,7 @@ import json
 import os
 
 DIR = os.getcwd()
-header_file_path = f"{DIR}/Data/EEG_data/sub25_main1.vhdr"
+header_file_path = f"{DIR}/Data/EEG_data/blinks.vhdr"
 raw = mne.io.read_raw_brainvision(header_file_path, preload=True)
 
 # If you have multiple EEG recordings (blocks) of the same experiment,
