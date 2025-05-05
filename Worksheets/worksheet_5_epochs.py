@@ -107,7 +107,7 @@ for dev in deviants:
     evokeds[dev] = dev_epochs.average()  # deviant
 
 # This part of the code can change, depending on your research question.
-# I will give you couple of exaples of what you can do with your data now to visualise MMN.
+# I will give you couple of examples of what you can do with your data now to visualise MMN.
 
 mmn_freq = mne.combine_evoked([evokeds['std_dev_freq'], evokeds['dev_freq']], weights=[-1, 1])
 
