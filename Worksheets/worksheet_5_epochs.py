@@ -14,8 +14,8 @@ events, event_id = mne.events_from_annotations(raw)
 mne.viz.plot_events(events, sfreq=raw.info["sfreq"], first_samp=raw.first_samp, event_id=event_id)
 
 # Create epochs based on the events list and define the time points of interest before and after the event
-t_min = -0.1
-t_max = 0.5
+t_min = ...
+t_max = ...
 epochs = mne.Epochs(raw, events, tmin=t_min, tmax=t_max)
 
 # Print the epochs object and notice the names of the event_ids
@@ -109,7 +109,14 @@ for dev in deviants:
 # This part of the code can change, depending on your research question.
 # I will give you couple of examples of what you can do with your data now to visualise MMN.
 
+# As inspiration, you can use this tutorial: https://mne.tools/stable/auto_tutorials/evoked/20_visualize_evoked.html
+
 mmn_freq = mne.combine_evoked([evokeds['std_dev_freq'], evokeds['dev_freq']], weights=[-1, 1])
+mmn_dur = mne.combine_evoked([evokeds['std_dev_dur'], evokeds['dev_dur']], weights=[-1, 1])
+mmn_loc = mne.combine_evoked([evokeds['std_dev_loc'], evokeds['dev_loc']], weights=[-1, 1])
+mmn_loud = mne.combine_evoked([evokeds['std_dev_loud'], evokeds['dev_loud']], weights=[-1, 1])
+
+mmns = [mmn_freq, mmn_dur, mmn_loc, mmn_loud]
 
 # Plot the difference waves on all electrodes
 
@@ -121,16 +128,36 @@ mne.viz.plot_compare_evokeds(
 
 # Plot the difference waves on selected region of interest
 
-mne.viz.plot_compare_evokeds([evokeds['dev_freq'], evokeds['std_dev_freq'], mmn_freq],
+mne.viz.plot_compare_evokeds({'Deviant': evokeds['dev_freq'],
+                              'Standard': evokeds['std_dev_freq'],
+                              'MMN': mmn_freq},
                               combine='mean',
                               legend='lower right',
-                              picks=['FCz', 'Fz', 'F1', 'F2'],
+                              picks=['FCz', 'Fz', 'F1', 'F2', 'FC1', 'FC2', 'C1', 'C2', 'Cz'],
                               show_sensors='upper right',
                               )
 
 # Plot the topography of the difference waves
 
 fig = mmn_freq.plot_topomap(0.15, average=0.1)
+
+# Plot all channels with topography of peaks
+
+evokeds['std_dev_freq'].plot_joint()
+mmn_loud.plot_joint()
+
+# Compare MMNs
+mne.viz.plot_compare_evokeds(mmns, picks="eeg", combine='gfp')
+mne.viz.plot_compare_evokeds({'Frequency MMN': mmn_freq,
+                              'Duration MMN': mmn_dur,
+                              'Location MMN': mmn_loc,
+                              'Loudness MMN': mmn_loud}, picks="Fz")
+
+mne.viz.plot_compare_evokeds(mmns, axes='topo')
+
+# MMN across electrodes
+
+mmn_loud.plot_image(show_names='auto')
 
 # Try to extract the amplitude for the MMN (you can try single electrode or ROI)
 # Try to extract the latency of the MMN
